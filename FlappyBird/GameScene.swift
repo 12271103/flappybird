@@ -143,9 +143,6 @@ class GameScene:SKScene, SKPhysicsContactDelegate{
     let repeatScrollGround = SKAction.repeatForever(SKAction.sequence([moveGround,resetGround]))
     
     //groundのスプライトを配置する
-    //forループになるらしい？
-    //stride:範囲を作成する関数
-    //なんでこの中に物理演算のプログラムを入れ込んだんだろう？
     stride(from: 0.0, to: needNumber, by: 1.0).forEach{ i in
       let sprite = SKSpriteNode(texture: groundTexture)
       print(i)
@@ -326,7 +323,6 @@ class GameScene:SKScene, SKPhysicsContactDelegate{
     
     
     //スプライトを追加する
-    //bird:クラスの初めに宣言したやつ。　var bird:SKSpriteNode!
     addChild(bird)
   }
   
@@ -338,18 +334,14 @@ class GameScene:SKScene, SKPhysicsContactDelegate{
     let itemTexture = SKTexture(imageNamed: "coin2")
     itemTexture.filteringMode = SKTextureFilteringMode.linear
     
-    //移動する距離を計算
-    let movingDistance = CGFloat(self.frame.size.width + itemTexture.size().width)
-    
     //左方向に移動させるアクションを作成（これで画像１枚分動く単位のようなものが作れた
     let moveItem = SKAction.moveBy(x: -415.0, y: 0, duration: 4.0)
     
-    //確認用
-    print(movingDistance)
-    print(self.size.width)
-    
     //自身を取り除くアクションを作成
     let removeItem = SKAction.removeFromParent()
+    
+    //
+    let itemAnimation = SKAction.sequence([moveItem,removeItem])
     
     
     //アイテムを生成するアクションを作成
@@ -369,14 +361,9 @@ class GameScene:SKScene, SKPhysicsContactDelegate{
       let itemSprite = SKSpriteNode(texture: itemTexture)
       
       //スプライトの表示位置を指定
-      //x:ちょうど画面外に隠れる　y:
       itemSprite.position = CGPoint(x: 490 + itemTexture.size().width / 2 , y: itemIchi)
       
-      //無限にアクションさせる
-      let repeatScrollItem = SKAction.repeatForever(moveItem)
-      
-      //スプライトにアクションを設定
-      itemSprite.run(repeatScrollItem)
+      itemSprite.run(itemAnimation)
       
       //スプライトに物理演算を設定する
       itemSprite.physicsBody = SKPhysicsBody(rectangleOf: itemTexture.size())
@@ -441,8 +428,6 @@ class GameScene:SKScene, SKPhysicsContactDelegate{
       
       
       //ベストスコアが更新されたか確認・更新
-      //userDefaultsは初めの方でscoreの下にインスタンスを作っているよ
-      //intager()でベストスコアを呼び出す…衝突のたびに毎回やってるのか
       var bestScore = userDefaults.integer(forKey: "BEST")
       if score > bestScore{
         //ベストスコアを更新
